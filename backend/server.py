@@ -10,7 +10,7 @@ from fastapi import (
     UploadFile, File, Form, WebSocket, WebSocketDisconnect, Query,
 )
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional, Dict, Set
 from datetime import datetime, timezone, timedelta
@@ -34,46 +34,37 @@ TOKEN_EXPIRY_DAYS = 7
 
 MAX_FILE_SIZE = 15 * 1024 * 1024  # 15MB
 
-# Emergent managed object storage
-STORAGE_BASE = (os.environ.get("INTEGRATION_PROXY_URL") or "").strip() or "https://integrations.emergentagent.com"
-STORAGE_URL = STORAGE_BASE.rstrip("/") + "/objstore/api/v1/storage"
-EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY")
-APP_NAME = "collabsphere"
-storage_key = None
+# MongoDB GridFS object storage
+gridfs_bucket = AsyncIOMotorGridFSBucket(db)
 
 
-def init_storage(force: bool = False):
-    global storage_key
-    if storage_key and not force:
-        return storage_key
-    resp = requests.post(f"{STORAGE_URL}/init", json={"emergent_key": EMERGENT_KEY}, timeout=30)
-    resp.raise_for_status()
-    storage_key = resp.json()["storage_key"]
-    return storage_key
+async def put_object(path: str, data: bytes, content_type: str) -> dict:
+    import io
+
+    file_id = await gridfs_bucket.upload_from_stream(
+        path,
+        io.BytesIO(data),
+        metadata={"contentType": content_type},
+    )
+
+    return {"path": str(file_id)}
 
 
-def put_object(path: str, data: bytes, content_type: str) -> dict:
-    key = init_storage()
-    resp = requests.put(
-        f"{STORAGE_URL}/objects/{path}",
-        headers={"X-Storage-Key": key, "Content-Type": content_type},
-        data=data, timeout=120)
-    resp.raise_for_status()
-    return resp.json()
+async def get_object(path: str):
+    from bson import ObjectId
 
+    file_id = ObjectId(path)
 
-def get_object(path: str):
-    key = init_storage()
-    resp = requests.get(
-        f"{STORAGE_URL}/objects/{path}",
-        headers={"X-Storage-Key": key}, timeout=60)
-    if resp.status_code == 404:
-        init_storage(force=True)
-        resp = requests.get(
-            f"{STORAGE_URL}/objects/{path}",
-            headers={"X-Storage-Key": storage_key}, timeout=60)
-    resp.raise_for_status()
-    return resp.content, resp.headers.get("Content-Type", "application/octet-stream")
+    stream = await gridfs_bucket.open_download_stream(file_id)
+    data = await stream.read()
+
+    metadata = stream.metadata or {}
+    content_type = metadata.get(
+        "contentType",
+        "application/octet-stream",
+    )
+
+    return data, content_type
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("collabsphere")
@@ -840,7 +831,7 @@ async def upload_file(file: UploadFile = File(...), user: dict = Depends(get_cur
     content_type = file.content_type or "application/octet-stream"
     path = f"{APP_NAME}/uploads/{user['_id']}/{fid}.{ext}"
     try:
-        result = put_object(path, contents, content_type)
+        result = await put_object(path, contents, content_type)
     except Exception as e:
         logger.error(f"Upload failed: {e}")
         raise HTTPException(status_code=502, detail="File storage unavailable")
@@ -867,7 +858,7 @@ async def download_file(file_id: str, request: Request):
     if not f:
         raise HTTPException(status_code=404, detail="File not found")
     try:
-        data, content_type = get_object(f["storage_path"])
+        data, content_type = await get_object(f["storage_path"])
     except Exception as e:
         logger.error(f"Download failed: {e}")
         raise HTTPException(status_code=502, detail="File storage unavailable")
