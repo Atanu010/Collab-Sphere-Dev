@@ -331,7 +331,7 @@ async def login(body: LoginBody, response: Response):
 
 @api.post("/auth/logout")
 async def logout(response: Response, user: dict = Depends(get_current_user)):
-    response.delete_cookie("access_token", path="/")
+    response.delete_cookie("access_token", path="/", samesite="none", secure=True)
     return {"ok": True}
 
 
