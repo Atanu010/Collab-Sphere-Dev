@@ -33,6 +33,7 @@ JWT_ALGORITHM = "HS256"
 TOKEN_EXPIRY_DAYS = 7
 
 MAX_FILE_SIZE = 15 * 1024 * 1024  # 15MB
+APP_NAME = "collabsphere"
 
 # MongoDB GridFS object storage
 gridfs_bucket = AsyncIOMotorGridFSBucket(db)
@@ -1041,14 +1042,8 @@ app.add_middleware(
 
 # ---------------------------------------------------------------------------
 # Startup: indexes + seed sample data
-# ---------------------------------------------------------------------------
 @app.on_event("startup")
 async def startup():
-    try:
-        init_storage()
-        logger.info("Object storage initialized")
-    except Exception as e:
-        logger.error(f"Storage init failed: {e}")
     await db.users.create_index("email", unique=True)
     await db.workspace_members.create_index([("workspace_id", 1), ("user_id", 1)])
     await db.messages.create_index([("channel_id", 1), ("created_at", -1)])
