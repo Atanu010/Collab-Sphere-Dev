@@ -1,0 +1,139 @@
+{
+  "project_name": "CollabSphere",
+  "app_type": "saas_app",
+  "sub_type": "real_time_collaboration_and_chat",
+  "theme": {
+    "mode": "light",
+    "background": "#F8FAFC",
+    "surface": "#FFFFFF",
+    "surface_subtle": "#F1F5F9",
+    "border": "#E2E8F0",
+    "border_focus": "#6366F1",
+    "primary_accent": "#4F46E5",
+    "primary_accent_hover": "#4338CA",
+    "primary_accent_light": "#EEF2FF",
+    "text_primary": "#0F172A",
+    "text_secondary": "#475569",
+    "text_muted": "#94A3B8",
+    "presence_online": "#10B981",
+    "presence_idle": "#F59E0B",
+    "presence_dnd": "#EF4444",
+    "presence_offline": "#94A3B8"
+  },
+  "typography": {
+    "heading_font": "Outfit, sans-serif",
+    "body_font": "Plus Jakarta Sans, sans-serif",
+    "code_font": "JetBrains Mono, monospace",
+    "font_imports": "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');",
+    "scales": {
+      "h1": "text-3xl font-bold tracking-tight text-slate-900",
+      "h2": "text-2xl font-semibold tracking-tight text-slate-900",
+      "h3": "text-xl font-semibold text-slate-900",
+      "h4": "text-base font-semibold text-slate-900",
+      "body": "text-sm leading-relaxed text-slate-700",
+      "small": "text-xs font-medium text-slate-500",
+      "caption": "text-[11px] font-semibold uppercase tracking-wider text-slate-400"
+    }
+  },
+  "layout_architecture": {
+    "desktop": {
+      "structure": "Three-Column Power Layout",
+      "left_column": "Workspace Switcher Rail (64px) + Channel/DM Sidebar (240px)",
+      "middle_column": "Main Conversation View + Header + Interactive Composer (flex-1)",
+      "right_column": "Collapsible Thread / Members / Shared Files Sidebar (300px)",
+      "spacing": "Gap-0 with crisp 1px subtle borders (border-slate-200)"
+    },
+    "mobile": {
+      "structure": "Genuine Mobile Navigation with Bottom Bar & Sheet Drawer",
+      "flow": "Workspace/Channel Drawer -> Main Conversation View -> Collapsible Info Sheet",
+      "composer": "Sticky bottom bar with safe-area padding and expandable attachment drawer"
+    }
+  },
+  "core_components": {
+    "workspace_switcher": {
+      "style": "Vertical icon rail with active indicator bar, rounded-2xl avatars, tooltip on hover, create workspace '+' button",
+      "active_state": "ring-2 ring-indigo-600 ring-offset-2 scale-105 rounded-xl transition-all"
+    },
+    "channel_item": {
+      "style": "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors text-slate-600 hover:bg-slate-100 hover:text-slate-900 cursor-pointer",
+      "active_style": "bg-indigo-50 text-indigo-700 font-semibold border-r-2 border-indigo-600",
+      "unread_style": "font-bold text-slate-900",
+      "unread_badge": "bg-indigo-600 text-white text-[11px] px-2 py-0.5 rounded-full font-bold ml-auto"
+    },
+    "message_bubble": {
+      "grouping_rule": "Messages sent within 5 minutes by the same user group under 1 avatar header.",
+      "received_message": "bg-white border border-slate-200 shadow-sm text-slate-800 rounded-2xl rounded-tl-sm p-3.5 space-y-1 max-w-[85%]",
+      "sent_message": "bg-indigo-600 text-white shadow-sm rounded-2xl rounded-tr-sm p-3.5 space-y-1 max-w-[85%] ml-auto",
+      "hover_actions": "Absolute floating bar on top-right: Emoji Reaction, Reply in Thread, Bookmark, More Options",
+      "reactions": "Inline pills with emoji + count, e.g., '👍 3' with indigo active outline"
+    },
+    "presence_indicator": {
+      "badge": "absolute bottom-0 right-0 w-3 h-3 rounded-full ring-2 ring-white",
+      "states": {
+        "online": "bg-emerald-500",
+        "idle": "bg-amber-500",
+        "dnd": "bg-rose-500",
+        "offline": "bg-slate-300"
+      }
+    },
+    "typing_indicator": {
+      "style": "flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-500 font-medium italic",
+      "dots_animation": "Three animated pulsing indigo dots (...) with subtle spring motion"
+    },
+    "composer": {
+      "container": "bg-white border border-slate-200 rounded-2xl p-3 shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 transition-all",
+      "toolbar": "flex items-center justify-between pt-2 border-t border-slate-100 text-slate-500",
+      "actions": "Formatting tools (Bold, Code block, Mention '@', Attach file, Emoji picker, Voice note) + Primary 'Send' button with paper plane icon"
+    },
+    "collaboration_dashboard": {
+      "note": "NO KPI CARDS, NO CHARTS, NO REVENUE STATS",
+      "cards": [
+        "Recent Workspaces & Active Projects Card",
+        "Pinned Conversations & Unread Threads Feed",
+        "Upcoming Team Milestones / Hackathon Deadlines",
+        "Quick Quick-Action Jump Grid ('Start Huddle', 'Share Code Snippet', 'Invite Teammate')"
+      ]
+    }
+  },
+  "image_urls": [
+    {
+      "category": "user_avatar_1",
+      "url": "https://images.unsplash.com/photo-1679476819592-3e233227fd83?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Student developer profile photo (male)"
+    },
+    {
+      "category": "user_avatar_2",
+      "url": "https://images.unsplash.com/photo-1583777061376-5454755ca86a?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Hackathon teammate profile photo (male in hoodie)"
+    },
+    {
+      "category": "user_avatar_3",
+      "url": "https://images.unsplash.com/photo-1642241184548-7a6aabbab769?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Project lead profile photo (female)"
+    },
+    {
+      "category": "user_avatar_4",
+      "url": "https://images.unsplash.com/photo-1772723246368-05f6037930d1?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Design team lead headshot"
+    }
+  ],
+  "testing_requirements": {
+    "data_testid_convention": "All interactive elements (buttons, inputs, tabs, channel items, message bubbles, avatars, modals) MUST include descriptive kebab-case data-testid attributes.",
+    "examples": [
+      "data-testid=\"workspace-switcher-item\"",
+      "data-testid=\"channel-list-item-#general\"",
+      "data-testid=\"message-input-textarea\"",
+      "data-testid=\"send-message-button\"",
+      "data-testid=\"member-details-toggle-button\"",
+      "data-testid=\"typing-indicator-container\"",
+      "data-testid=\"presence-badge-online\""
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Strictly follow the light theme specs: pure white surfaces (#FFFFFF), warm slate canvas (#F8FAFC), crisp borders (#E2E8F0), and one signature Indigo accent (#4F46E5).",
+    "Do NOT create black/dark-blue analytics dashboard views with financial KPI charts.",
+    "Make the conversation experience feel responsive, interactive, and polished with typing indicators, emoji reactions, read receipts, and file attachments.",
+    "Ensure standard JS component modularity without relying on TS types.",
+    "Apply data-testid to every interactive component for easy verification."
+  ]
+}
