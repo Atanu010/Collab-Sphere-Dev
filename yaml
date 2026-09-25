@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: collabsphere-backend
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: DB_NAME
+        value: collabsphere
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
