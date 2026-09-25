@@ -10,6 +10,7 @@ from fastapi import (
     UploadFile, File, Form, WebSocket, WebSocketDisconnect, Query,
 )
 from starlette.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional, Dict, Set
