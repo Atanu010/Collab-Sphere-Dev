@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-export const API_BASE = `${BACKEND_URL}/api`;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "";
+export const API_BASE = BACKEND_URL ? `${BACKEND_URL.replace(/\/$/, "")}/api` : "/api";
 
 const TOKEN_KEY = "cs_token";
 
@@ -28,7 +28,15 @@ api.interceptors.request.use((config) => {
 
 export function wsUrl() {
   const t = getToken();
-  const base = BACKEND_URL.replace(/^http/, "ws");
+  let base;
+  if (BACKEND_URL) {
+    base = BACKEND_URL.replace(/\/$/, "").replace(/^http/, "ws");
+  } else if (typeof window !== "undefined") {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    base = `${protocol}//${window.location.host}`;
+  } else {
+    base = "ws://localhost:8000";
+  }
   return `${base}/api/ws?token=${encodeURIComponent(t || "")}`;
 }
 

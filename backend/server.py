@@ -9,6 +9,7 @@ from fastapi import (
     FastAPI, APIRouter, HTTPException, Request, Response, Depends,
     UploadFile, File, Form, WebSocket, WebSocketDisconnect, Query,
 )
+from fastapi.responses import FileResponse
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
@@ -25,11 +26,11 @@ import requests
 # ---------------------------------------------------------------------------
 # Setup
 # ---------------------------------------------------------------------------
-mongo_url = os.environ["MONGO_URL"]
+mongo_url = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ["DB_NAME"]]
+db = client[os.environ.get("DB_NAME", "collabsphere")]
 
-JWT_SECRET = os.environ["JWT_SECRET"]
+JWT_SECRET = os.environ.get("JWT_SECRET", "collabsphere_jwt_secret_key_production_2026")
 JWT_ALGORITHM = "HS256"
 TOKEN_EXPIRY_DAYS = 7
 
@@ -1036,12 +1037,46 @@ app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
     allow_origins=[os.environ.get("FRONTEND_URL", "http://localhost:3000"), "http://localhost:3000"],
+    allow_origin_regex=r"^https?://.*",
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
 # ---------------------------------------------------------------------------
+# Frontend Single Page Application (SPA) Serving
+# ---------------------------------------------------------------------------
+frontend_build_candidates = [
+    ROOT_DIR.parent / "frontend" / "build",
+    ROOT_DIR / "frontend" / "build",
+    Path("frontend/build"),
+    Path("/app/frontend/build"),
+]
+frontend_build_dir = None
+for candidate in frontend_build_candidates:
+    if candidate.exists() and (candidate / "index.html").exists():
+        frontend_build_dir = candidate.resolve()
+        break
+
+if frontend_build_dir:
+    static_dir = frontend_build_dir / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(request: Request, full_path: str):
+        if full_path.startswith("api/") or full_path == "api" or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+            raise HTTPException(status_code=404, detail="Not found")
+        target_file = frontend_build_dir / full_path
+        if target_file.is_file():
+            return FileResponse(str(target_file))
+        index_file = frontend_build_dir / "index.html"
+        if index_file.is_file():
+            return FileResponse(str(index_file))
+        raise HTTPException(status_code=404, detail="Page not found")
+else:
+    @app.get("/")
+    async def api_root():
+        return {"name": "CollabSphere API", "status": "ok", "message": "Backend is active. Frontend build not present."}
 # Startup: indexes + seed sample data
 @app.on_event("startup")
 async def startup():
