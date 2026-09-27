@@ -1,117 +1,84 @@
 # CollabSphere
 
-A real-time collaboration platform designed for teams to communicate, organize workspaces, and collaborate through channels and direct messages.
+> A full-stack, real-time collaboration platform built with React, FastAPI, MongoDB, WebSockets, JWT authentication, and Docker — deployed as a production web service on Render.
 
-CollabSphere combines workspace-based communication with real-time messaging, presence, notifications, file sharing, and role-based access control in a single web application.
-
----
-
-## ✨ Features
-
-### 🔐 Authentication & User Management
-
-- User registration and login
-- JWT-based authentication
-- HTTP-only authentication cookies
-- Bearer-token authentication support
-- Password hashing with bcrypt
-- User profile management
-- Account settings
-- Protected application routes
-
-### 🏢 Workspaces
-
-- Create and manage workspaces
-- Workspace membership
-- Workspace roles and permissions
-- Admin, moderator, and member access levels
-- Member invitations
-- Member removal
-- Role management
-- Online member presence
-
-### 💬 Channels
-
-- Public channels
-- Private channels
-- Channel access control
-- Create, update, and delete channels
-- Channel-based team communication
-- Unread message tracking
-
-### 💌 Direct Messaging
-
-- Direct messages between users
-- Conversation history
-- Message pagination
-- Global direct-message navigation
-
-### ⚡ Real-Time Collaboration
-
-CollabSphere uses WebSockets for real-time communication.
-
-Real-time functionality includes:
-
-- Instant message delivery
-- Online/offline presence
-- Presence snapshots
-- Typing indicators
-- Read receipts
-- Real-time notifications
-- WebSocket connection health checks
-
-### 🔎 Messaging
-
-- Message history
-- Paginated conversations
-- Message search
-- `@username` mentions
-- Read receipts
-- File attachments
-
-### 📁 File Sharing
-
-- Upload files within the collaboration environment
-- File metadata management
-- File downloads
-- Workspace file listing
-- Upload size validation
-
-### 🔔 Notifications
-
-- Real-time notifications
-- Unread notification count
-- Mark individual notifications as read
-- Mark all notifications as read
-
-### ⚙️ Profile & Settings
-
-- Profile management
-- Application settings
-- User-specific configuration
+[![Live Demo](https://img.shields.io/badge/Live-Demo-46E3B7?style=for-the-badge)](https://collabsphere-oq5z.onrender.com)
+[![Frontend](https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Backend](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Database](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Real--Time](https://img.shields.io/badge/Real--Time-WebSockets-000000?style=for-the-badge)](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)
+[![Deployment](https://img.shields.io/badge/Deployment-Docker%20%2B%20Render-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
 ---
 
-## 🏗️ Architecture
+## Overview
+
+**CollabSphere** is a full-stack real-time collaboration platform designed to demonstrate how a modern web application can combine a responsive frontend, asynchronous backend services, persistent database storage, authentication, and real-time communication into a single production-oriented system.
+
+The application uses **React** for the frontend and **FastAPI** for the backend, with **MongoDB Atlas** providing persistent data storage.
+
+Real-time functionality is implemented using **WebSockets**, allowing the application to maintain persistent communication between clients and the backend.
+
+The application is containerized using **Docker** and deployed as a **Docker Web Service on Render**.
+
+The frontend and backend are served through the same production domain, providing a simple deployment architecture while also avoiding unnecessary cross-origin complexity.
+
+---
+
+## Live Application
+
+### 🌐 Live Demo
+
+**https://collabsphere-oq5z.onrender.com**
+
+The production deployment has been tested for:
+
+- Homepage availability
+- React application loading
+- Static asset delivery
+- API availability
+- SPA client-side routing
+- Deep-link routing
+- Authentication middleware
+- MongoDB connectivity
+- WebSocket endpoint availability
+
+---
+
+# Features
+
+## Frontend
+
+- React-based Single Page Application
+- Client-side routing
+- Responsive application interface
+- Production React bundle
+- Static asset serving
+- SPA deep-link support
+- Same-origin communication with the backend
+
+## Backend
+
+- FastAPI REST API
+- Python 3.11 runtime
+- Structured API architecture
+- Authentication middleware
+- Protected API routes
+- JSON-based API responses
+- WebSocket support
+- MongoDB integration
+
+## Authentication
+
+CollabSphere includes authentication infrastructure based around:
+
+- JWT authentication
+- Authentication middleware
+- Protected API endpoints
+- User authentication state
+- `/api/auth/me` authentication verification endpoint
+
+An unauthenticated request to the protected authentication endpoint correctly returns:
 
 ```text
-                         ┌──────────────────────┐
-                         │      CollabSphere    │
-                         │     React Frontend   │
-                         └──────────┬───────────┘
-                                    │
-                         HTTP / REST API
-                                    │
-                                    ▼
-                         ┌──────────────────────┐
-                         │      FastAPI         │
-                         │      Backend        │
-                         └───────┬───────┬──────┘
-                                 │       │
-                         MongoDB │       │ WebSocket
-                                 │       │
-                                 ▼       ▼
-                         ┌──────────┐  ┌──────────────┐
-                         │ MongoDB  │  │ Real-Time    │
-                         │ Database │  │ Collaboration│
-                         └──────────┘  └──────────────┘
+HTTP 401 Unauthorized
