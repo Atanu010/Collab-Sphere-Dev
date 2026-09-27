@@ -4,8 +4,11 @@
 FROM node:20-bullseye-slim AS frontend-builder
 WORKDIR /app/frontend
 
+ENV CI=false \
+    NODE_OPTIONS="--max-old-space-size=4096"
+
 COPY frontend/package.json ./
-RUN npm install -g yarn && yarn install --network-timeout 100000
+RUN yarn install --network-timeout 300000
 
 COPY frontend/ ./
 RUN yarn build
@@ -22,6 +25,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 COPY backend/requirements.txt ./backend/
